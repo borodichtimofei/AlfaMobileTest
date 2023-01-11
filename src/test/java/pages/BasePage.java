@@ -25,7 +25,7 @@ public class BasePage {
         wait = new WebDriverWait(driver, TIMEOUT, POLLING);
     }
 
-    void initElements(BasePage page){
+    void initElements(BasePage page) {
         PageFactory.initElements(new AppiumFieldDecorator(driver, Duration.ofSeconds(10)), page);
     }
 
@@ -33,7 +33,7 @@ public class BasePage {
         try {
             wait.until(ExpectedConditions.visibilityOf(element));
             return true;
-        }catch (TimeoutException ex){
+        } catch (TimeoutException ex) {
             return false;
         }
     }

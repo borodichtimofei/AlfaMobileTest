@@ -1,7 +1,8 @@
 package tests;
 
-import org.testng.Assert;
 import org.testng.annotations.*;
+
+import static org.testng.Assert.assertEquals;
 
 public class LoginTest extends BaseTest {
 
@@ -14,29 +15,36 @@ public class LoginTest extends BaseTest {
     @DataProvider(name = "Registration with negative data")
     public Object[][] RegistrationDataNegative() {
         return new Object[][]{
-                {"test", "test", "Введены неверные данные"},
+                {"Login-1", "Pass-1", "Введены неверные данные"},
                 {"", "", "Введены неверные данные"},
-                {"test", "", "Введены неверные данные"},
-                {"", "test", "Введены неверные данные"}};
+                {"Login-1", "", "Введены неверные данные"},
+                {"", "Pass-1", "Введены неверные данные"}};
     }
-    @Test (dataProvider = "Registration with negative data")
-    public void ifTheDataIsIncorrectRegistrationShouldNotBePerformed(String login, String password, String errorMessage){
+
+    @Test(description = "Input incorrect data", dataProvider = "Registration with negative data")
+    public void ifTheDataIsIncorrectRegistrationShouldNotBePerformed(String login, String password, String errorMessage) {
         loginPage.isPageOpened();
-        loginPage.enterLogin(login);
-        loginPage.enterPassword(password);
+        assertEquals(loginPage.getTitleName(),
+                "Вход в Alfa-Test",
+                "Title name does not match");
+        loginPage.inputLogin(login);
+        loginPage.inputPassword(password);
         loginPage.clickSubmit();
-        Assert.assertEquals(loginPage.getErrorMessage(),
+        assertEquals(loginPage.getErrorMessage(),
                 errorMessage,
                 "Message does not match");
     }
 
-    @Test
+    @Test(description = "Input correct data")
     public void ifTheDataIsCorrectRegistrationShouldBePerformed() {
         loginPage.isPageOpened();
-        loginPage.enterLogin("Login");
-        loginPage.enterPassword("Password");
+        assertEquals(loginPage.getTitleName(),
+                "Вход в Alfa-Test",
+                "Title name does not match");
+        loginPage.inputLogin("Login");
+        loginPage.inputPassword("Password");
         loginPage.clickSubmit();
-        Assert.assertEquals(loginPage.getSuccessMessage(),
+        assertEquals(loginPage.getSuccessMessage(),
                 "Вход в Alfa-Test",
                 "Message does not match");
     }

@@ -17,7 +17,7 @@ public class BaseTest {
     AppiumDriver driver;
     LoginPage loginPage;
 
-    void setCustomCapabilities(String _deviceName, String _platform){
+    void setCustomCapabilities(String _deviceName, String _platform) {
         deviceName = _deviceName;
         platform = _platform;
     }
@@ -32,7 +32,7 @@ public class BaseTest {
 
     @AfterMethod(alwaysRun = true)
     void stopAppiumServer() {
-        if(driver != null) {
+        if (driver != null) {
             driver.quit();
         }
         appiumService.stop();
