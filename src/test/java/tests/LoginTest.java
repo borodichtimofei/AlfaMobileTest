@@ -1,51 +1,114 @@
 package tests;
 
-import org.testng.annotations.*;
+import io.qameta.allure.Step;
+import org.openqa.selenium.By;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+import pages.LoginPage;
 
 import static org.testng.Assert.assertEquals;
 
 public class LoginTest extends BaseTest {
 
-    @Parameters(value = {"deviceName", "platform"})
-    @BeforeClass
-    public void setupDeviceParameters(@Optional("Pixel_3a_API_33_arm64-v8a") String deviceName, @Optional("Android") String platform) {
-        setCustomCapabilities(deviceName, platform);
-    }
-
-    @DataProvider(name = "Registration with negative data")
-    public Object[][] RegistrationDataNegative() {
+    @DataProvider(name = "Login with negative data")
+    public Object[][] LoginDataNegative() {
         return new Object[][]{
-                {"Login-1", "Pass-1", "Введены неверные данные"},
-                {"", "", "Введены неверные данные"},
-                {"Login-1", "", "Введены неверные данные"},
-                {"", "Pass-1", "Введены неверные данные"}};
+                {"Login-1", "Pass-1", mismatchMessage},
+                {"", "", mismatchMessage},
+                {"Login-1", "", mismatchMessage},
+                {"", "Pass-1", mismatchMessage}};
     }
 
-    @Test(description = "Input incorrect data", dataProvider = "Registration with negative data")
-    public void ifTheDataIsIncorrectRegistrationShouldNotBePerformed(String login, String password, String errorMessage) {
+    @DataProvider(name = "Attribute value")
+    public Object[][] AttributeValue() {
+        return new Object[][]{
+                {LoginPage.getSubmitButton(), "text", "Вход", mismatchMessage},
+                {LoginPage.getSubmitButton(), "enabled", attributeValueTrue, mismatchMessage},
+                {LoginPage.getSubmitButton(), "clickable", attributeValueTrue, mismatchMessage},
+                {LoginPage.getSubmitButton(), "displayed", attributeValueTrue, mismatchMessage},
+                {LoginPage.getSubmitButton(), "focusable", attributeValueTrue, mismatchMessage},
+                {LoginPage.getLoginField(), "text", "Логин", mismatchMessage},
+                {LoginPage.getLoginField(), "enabled", attributeValueTrue, mismatchMessage},
+                {LoginPage.getLoginField(), "clickable", attributeValueTrue, mismatchMessage},
+                {LoginPage.getLoginField(), "displayed", attributeValueTrue, mismatchMessage},
+                {LoginPage.getLoginField(), "focusable", attributeValueTrue, mismatchMessage},
+                {LoginPage.getPasswordField(), "text", "Пароль", mismatchMessage},
+                {LoginPage.getPasswordField(), "enabled", attributeValueTrue, mismatchMessage},
+                {LoginPage.getPasswordField(), "clickable", attributeValueTrue, mismatchMessage},
+                {LoginPage.getPasswordField(), "displayed", attributeValueTrue, mismatchMessage},
+                {LoginPage.getPasswordField(), "focusable", attributeValueTrue, mismatchMessage}};
+    }
+
+    @Test(description = "Input negative data", dataProvider = "Login with negative data", priority = 3)
+    @Step("Login with negative data")
+    public void checkThatCannotLoginWithInvalidData(String login, String password, String mismatchMessage) {
         loginPage.isPageOpened();
         assertEquals(loginPage.getTitleName(),
-                "Вход в Alfa-Test",
-                "Title name does not match");
+                title,
+                mismatchMessage);
         loginPage.inputLogin(login);
         loginPage.inputPassword(password);
         loginPage.clickSubmit();
         assertEquals(loginPage.getErrorMessage(),
                 errorMessage,
-                "Message does not match");
+                mismatchMessage);
     }
 
-    @Test(description = "Input correct data")
-    public void ifTheDataIsCorrectRegistrationShouldBePerformed() {
+    @Test(description = "Input valid data", priority = 5)
+    @Step("Login with valid data")
+    public void checkThatCanLoginWithValidData() {
         loginPage.isPageOpened();
         assertEquals(loginPage.getTitleName(),
-                "Вход в Alfa-Test",
-                "Title name does not match");
-        loginPage.inputLogin("Login");
-        loginPage.inputPassword("Password");
+                title,
+                mismatchMessage);
+        loginPage.inputLogin(login);
+        loginPage.inputPassword(password);
         loginPage.clickSubmit();
         assertEquals(loginPage.getSuccessMessage(),
-                "Вход в Alfa-Test",
-                "Message does not match");
+                successMessage,
+                mismatchMessage);
+    }
+
+    @Test(description = "Input over maximum value", priority = 4)
+    @Step("Data entry over maximum value")
+    public void checkThatCanNotEnterInvalidLoginValue() {
+        loginPage.isPageOpened();
+        assertEquals(loginPage.getTitleName(),
+                title,
+                mismatchMessage);
+        loginPage.inputLogin("123456789012345678901234567890123456789012345678901");
+        loginPage.inputPassword(password);
+        loginPage.clickSubmit();
+        assertEquals(loginPage.getErrorMessage(),
+                "Invalid value",
+                mismatchMessage);
+    }
+
+    @Test(description = "Visibility password", priority = 2)
+    @Step("Password visibility check")
+    public void checkPasswordVisibility() {
+        loginPage.isPageOpened();
+        assertEquals(loginPage.getTitleName(),
+                title,
+                mismatchMessage);
+        assertEquals(loginPage.getAttribute("password", LoginPage.getPasswordField()),
+                attributeValueTrue,
+                mismatchMessage);
+        loginPage.clickVisibilityButton();
+        assertEquals(loginPage.getAttribute("password", LoginPage.getPasswordField()),
+                attributeValueFalse,
+                mismatchMessage);
+    }
+
+    @Test(dataProvider = "Attribute value", priority = 1)
+    @Step("Attribute check")
+    public void checkPlaceholderField(By locator, String attribute, String attributeValue, String mismatchMessage) {
+        loginPage.isPageOpened();
+        assertEquals(loginPage.getTitleName(),
+                title,
+                mismatchMessage);
+        assertEquals(loginPage.getAttribute(attribute, locator),
+                attributeValue,
+                mismatchMessage);
     }
 }

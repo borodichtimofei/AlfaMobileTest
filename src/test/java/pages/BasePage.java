@@ -3,6 +3,8 @@ package pages;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -10,8 +12,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
+@Data
+@AllArgsConstructor
 public class BasePage {
-
 
     AppiumDriver<MobileElement> driver;
 
